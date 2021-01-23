@@ -7,6 +7,7 @@ import LocaleStore from "./stores/localeStore.js";
 import Console from "./log.js";
 import Utils from "../utils.js";
 import Osu from "./osu.js";
+import NHentai from "./nhentai.js";
 
 import config from "../../config.js";
 
@@ -19,6 +20,7 @@ export default class Ereshkigal extends Client {
 		this.console = new Console(this);
 		this.utils = new Utils(this);
 		this.osu = new Osu(this);
+		this.nhentai = new NHentai(this);
 
 		this.commands = new CommandstStore(this);
 		this.events = new EventStore(this);

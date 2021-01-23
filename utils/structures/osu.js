@@ -292,7 +292,7 @@ export default class Osu {
 					1,
 				)} **OD:** ${Number(beatmap.diff_overall).toFixed(
 					1,
-				)} **OD:** ${Number(beatmap.diff_drain).toFixed(
+				)} **HP:** ${Number(beatmap.diff_drain).toFixed(
 					1,
 				)}\n**SR:** ${Number(beatmap.difficultyrating).toFixed(
 					2,

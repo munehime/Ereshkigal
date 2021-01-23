@@ -36,7 +36,10 @@ export default class extends Event {
 
 			if (message.attachments.size > 0) {
 				if (message.attachments.first().name.includes(".osz"))
-					return this.client.osu.getAudioByOszFile(message, message.attachments.first());
+					return this.client.osu.getAudioByOszFile(
+						message,
+						message.attachments.first(),
+					);
 			}
 
 			if (
@@ -44,7 +47,7 @@ export default class extends Event {
 				(message.content.includes("https://nhentai.net/g/") ||
 					args[0].match(/^[0-9]*$/gm))
 			)
-				return;
+				return this.client.nhentai.printBook(message, args[0]);
 
 			return;
 		}
