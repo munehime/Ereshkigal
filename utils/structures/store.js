@@ -12,7 +12,7 @@ export default class Store extends Collection {
 	}
 
 	set(file) {
-		let name = file.name || file.command;
+		let name = file.command || file.name;
 
 		if (!Array.isArray(name)) name = [name];
 

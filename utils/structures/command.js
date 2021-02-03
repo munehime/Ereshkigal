@@ -4,11 +4,12 @@ export default class Command {
 	constructor(client, file, options = {}) {
 		this.client = client;
 		this.command = options.command || file.name;
+		this.category = options.category || "";
 		this.startsWith = options.startsWith || false;
 		this.argsRequired = options.argsRequired || 0;
 		this.description = options.description;
 		this.usage = options.usage || "";
-		this.category = options.category || "";
+		this.example = options.example || [];
 		this.hidden = options.hidden || false;
 		this.guildOnly = options.guildOnly || true;
 		this.botPerms = new Permissions(options.botPerms || []).freeze();

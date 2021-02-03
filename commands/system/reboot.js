@@ -4,8 +4,8 @@ export default class Reboot extends Command {
 	constructor(...args) {
 		super(...args, {
 			command: "reboot",
-			description: "Restart the bot.",
 			category: "System",
+			description: "Restart the bot.",
 			hidden: true,
 			permLevel: "Bot Admin",
 		});

@@ -13,6 +13,51 @@ export default class extends Event {
 			},
 		);
 
+		const channel = this.client.channels.cache.get("694361376692633660");
+		try {
+			const webhooks = await channel.fetchWebhooks();
+			let webhook,
+				exists = false;
+
+			webhooks.some((wh) => {
+				if (wh.name === this.client.user.username) {
+					webhook = wh;
+					exists = true;
+					return true;
+				}
+			});
+
+			if (!exists)
+				await channel
+					.createWebhook(this.client.user.username, {
+						avatar: this.client.user.displayAvatarURL(),
+					})
+					.then((wh) => {
+						webhook = wh;
+						console.log(`Created webhook ${wh}`);
+					});
+
+			const embed = {
+				author: {
+					name: `${this.client.user.username} has connected!`,
+					icon_url: this.client.user.displayAvatarURL(),
+				},
+				color: "#7CFC00",
+				fields: [
+					{
+						name: `Server Count: ${this.client.guilds.cache.size}`,
+						value: this.client.guilds.cache
+							.map((g) => `- ${g}`)
+							.join("\n"),
+					},
+				],
+			};
+
+			await webhook.send({ embeds: [embed] });
+		} catch (error) {
+			console.error("Error trying to send: ", error);
+		}
+
 		cl = this.client;
 		await countDownToTime("2021-06-25");
 		await countTimePassed("2020-04-22");
@@ -25,7 +70,7 @@ async function countDownToTime(time) {
 		time = new Date(time),
 		timeDifference = time - now;
 
-		daysTo = Math.floor((timeDifference / SECONDS_IN_A_DAY) * 1);
+	daysTo = Math.floor((timeDifference / SECONDS_IN_A_DAY) * 1);
 
 	cl.channels
 		.fetch("743812798592581694")
@@ -49,14 +94,16 @@ async function countTimePassed(time) {
 		time = new Date(time),
 		timeDifference = now - time;
 
-		daysFrom = Math.floor((timeDifference / SECONDS_IN_A_DAY) * 1);
+	daysFrom = Math.floor((timeDifference / SECONDS_IN_A_DAY) * 1);
 
 	cl.channels
 		.fetch("746218203213987941")
 		.then((channel) => {
 			let day = channel.name.split(" ")[3];
 			if (Number(day) !== daysFrom) {
-				channel.setName(`Fuck Rem Day ${daysFrom}`).catch(console.error);
+				channel
+					.setName(`Fuck Rem Day ${daysFrom}`)
+					.catch(console.error);
 			}
 		})
 		.catch(console.error);

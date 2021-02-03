@@ -4,8 +4,8 @@ export default class Ping extends Command {
 	constructor(...args) {
 		super(...args, {
 			command: "ping",
-			description: "Check bot's latency.",
 			category: "General",
+			description: "Check bot's latency.",
 		});
 	}
 

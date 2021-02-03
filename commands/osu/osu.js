@@ -4,10 +4,10 @@ export default class Osu extends Command {
 	constructor(...args) {
 		super(...args, {
 			command: "osu",
+			category: "osu!",
 			description: "Show infomation of osu! player.",
 			argsRequired: 1,
 			usage: "[username | id]",
-			category: "osu!",
 		});
 	}
 

@@ -4,10 +4,10 @@ export default class Reload extends Command {
 	constructor(...args) {
 		super(...args, {
 			command: "reload",
+			category: "System",
 			description: "Reload a command or event.",
 			argsRequired: 1,
 			usage: "<command | event>",
-			category: "System",
 			hidden: true,
 			permLevel: "Bot Admin",
 		});

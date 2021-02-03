@@ -4,10 +4,10 @@ export default class Say extends Command {
 	constructor(...args) {
 		super(...args, {
 			command: "say",
+			category: "Staff",
 			description: "Make bot say something.",
 			argsRequired: 2,
 			usage: "<channel id> <text>",
-			category: "Staff",
 		});
 	}
 

@@ -66,7 +66,7 @@ export default class extends Event {
 	}
 
 	checkCommand(msg, command, args) {
-		if (command.category == "Dev") {
+		if (command.category == "Dev" || command.hidden) {
 			if (message.author.id !== "203699280261808138") {
 				return false;
 			}
