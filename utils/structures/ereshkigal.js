@@ -1,6 +1,6 @@
 import { Client } from "discord.js";
 
-import CommandstStore from "./stores/commandStore.js";
+import CommandStore from "./stores/commandStore.js";
 import EventStore from "./stores/eventStore.js";
 import LocaleStore from "./stores/localeStore.js";
 
@@ -22,7 +22,7 @@ export default class Ereshkigal extends Client {
 		this.osu = new Osu(this);
 		this.nhentai = new NHentai(this);
 
-		this.commands = new CommandstStore(this);
+		this.commands = new CommandStore(this);
 		this.events = new EventStore(this);
 		this.locales = new LocaleStore(this);
 	}

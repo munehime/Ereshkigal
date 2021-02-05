@@ -1,5 +1,5 @@
 {
-	"name": "lo",
+	"name": "ereshkigal",
 	"version": "1.0.0",
 	"description": "",
 	"main": "index.js",
@@ -20,8 +20,6 @@
 		"moment": "^2.29.1",
 		"moment-duration-format": "^2.3.2",
 		"nana-api": "^1.1.2",
-		"nhentai-api-js": "^1.1.4",
-		"node-lame": "^1.2.2",
 		"node-localstorage": "^2.1.6",
 		"node-spotify-api": "^1.1.1",
 		"ojsama": "^1.2.5",
