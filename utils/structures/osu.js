@@ -69,7 +69,7 @@ export default class Osu {
 		axios
 			.get(attachment.url, { responseType: "stream" })
 			.then(async (response) => {
-				await checkDirectory();
+				await response.data.pipe(
 				await response.data.pipe(
 					fs
 						.createWriteStream(`temp/downloads/${attachment.name}`)
