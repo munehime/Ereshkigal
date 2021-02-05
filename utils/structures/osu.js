@@ -15,9 +15,12 @@ const beatmapRegex = {
 	accRegex: new RegExp(/(\S+)\W+/gi),
 };
 
+let cl;
+
 export default class Osu {
 	constructor(client) {
 		this.client = client;
+		cl = this.client;
 	}
 
 	async init() {
@@ -487,7 +490,7 @@ async function client_credentials_grant() {
 			access_token = response.data.access_token;
 			expires_in = response.data.expires_in;
 		})
-		.catch((error) => this.client.console.error(error));
+		.catch((error) => cl.console.error(error));
 
 	clearTimeout(client_credentials_grant.interval);
 	client_credentials_grant.interval = setTimeout(function () {
@@ -497,5 +500,5 @@ async function client_credentials_grant() {
 }
 
 function replaceToValidName(sentence) {
-	return sentence.replace(/ /g, "_").replace(/[\\/:*?\"<>|]/g, "");
+	return sentence.replace(/[^A-Z0-9]/gi, "_");
 }
