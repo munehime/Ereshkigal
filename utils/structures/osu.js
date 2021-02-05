@@ -24,6 +24,17 @@ export default class Osu {
 	}
 
 	async init() {
+		if (!fs.existsSync("temp")) {
+			try {
+				fs.mkdirSync("temp");
+				fs.mkdirSync("temp/downloads");
+				fs.mkdirSync("temp/output");
+			} catch (err) {
+				reject("error");
+				this.client.console.error(err);
+			}
+		}
+
 		let instance = axios.create({
 			baseURL: "https://osu.ppy.sh/api",
 		});
@@ -58,6 +69,7 @@ export default class Osu {
 		axios
 			.get(attachment.url, { responseType: "stream" })
 			.then(async (response) => {
+				await checkDirectory();
 				await response.data.pipe(
 					fs
 						.createWriteStream(`temp/downloads/${attachment.name}`)
@@ -165,8 +177,8 @@ export default class Osu {
 				.get(`https://osu.gatari.pw/d/${beatmap.beatmapset_id}`, {
 					responseType: "stream",
 				})
-				.then((response) => {
-					response.data.pipe(
+				.then(async (response) => {
+					await response.data.pipe(
 						fs
 							.createWriteStream(
 								`temp/downloads/${replaceToValidName(
