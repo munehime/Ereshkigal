@@ -24,17 +24,6 @@ export default class Osu {
 	}
 
 	async init() {
-		if (!fs.existsSync("temp")) {
-			try {
-				fs.mkdirSync("temp");
-				fs.mkdirSync("temp/downloads");
-				fs.mkdirSync("temp/output");
-			} catch (err) {
-				reject("error");
-				this.client.console.error(err);
-			}
-		}
-
 		let instance = axios.create({
 			baseURL: "https://osu.ppy.sh/api",
 		});
@@ -63,6 +52,16 @@ export default class Osu {
 		});
 
 		this.apiv2 = instance;
+
+		if (!fs.existsSync("temp")) {
+			try {
+				fs.mkdirSync("temp");
+				fs.mkdirSync("temp/downloads");
+				fs.mkdirSync("temp/output");
+			} catch (err) {
+				this.client.console.error(err);
+			}
+		}
 	}
 
 	getAudioByOszFile(message, attachment) {

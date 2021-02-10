@@ -13,7 +13,9 @@ export default class extends Event {
 			},
 		);
 
-		const channel = this.client.channels.cache.get("694361376692633660");
+		const channel = this.client.channels.cache.get(
+			process.env.BOT_LOG_CHANNEL_ID,
+		);
 		try {
 			const webhooks = await channel.fetchWebhooks();
 			let webhook,

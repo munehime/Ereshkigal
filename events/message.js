@@ -27,9 +27,8 @@ export default class extends Event {
 		const args = message.content.trim().split(/ +/g);
 
 		if (!args[0].startsWith(this.client.config.prefix)) {
-			if (args[0].match(regex.timestamp)) {
+			if (args[0].match(regex.timestamp))
 				return this.client.osu.sendTimestamp(message, regex.timestamp);
-			}
 
 			if (message.content.match(regex.beatmap))
 				return this.client.osu.getBeatmap(message, args, regex.beatmap);
@@ -59,17 +58,14 @@ export default class extends Event {
 		for (const [key, cmd] of this.client.commands) {
 			if (!key.includes(args[0])) continue;
 
-			if (this.checkCommand(msg, cmd, args)) {
+			if (this.checkCommand(msg, cmd, args))
 				this.runCommand(cmd, { message, args });
-			}
 		}
 	}
 
 	checkCommand(msg, command, args) {
 		if (command.category == "Dev" || command.hidden) {
-			if (message.author.id !== "203699280261808138") {
-				return false;
-			}
+			if (message.author.id !== process.env.BOT_OWNER_ID) return false;
 		}
 
 		let cmdMatch = false,

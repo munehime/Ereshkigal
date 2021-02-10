@@ -1,11 +1,12 @@
 import Locale from "../utils/structures/locales.js";
 
-export default class EN extends Locale {
-	data = {
-		ping: (ms) => `**Pong!!!\nCurent latency is ${ms} ms.**`,
-	};
+const data = {
+	hello: "Hello",
+	ping: (ms) => `**Pong!!!\nCurrent latency is ${ms} ms.**`,
+};
 
-	async translate(key, ...args) {
+export default class EN extends Locale {
+	translate(key, ...args) {
 		const translation = data[key];
 		if (typeof translation === "function") return translation(args);
 		else return translation;
