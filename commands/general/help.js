@@ -63,7 +63,7 @@ export default class Help extends Command {
 					name: `${this.client.user.username}'s Commands List`,
 					icon_url: this.client.user.displayAvatarURL(),
 				},
-				thumbnails: {
+				thumbnail: {
 					url: this.client.user.displayAvatarURL(),
 				},
 				color: "#e6c333",

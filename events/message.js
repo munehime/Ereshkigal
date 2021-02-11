@@ -10,56 +10,91 @@ const regex = {
 
 export default class extends Event {
 	async run(message) {
-		if (message.author.bot) return;
+		try {
+			if (message.author.bot) return;
 
-		if (emojiList.includes(message.content))
-			return message.channel.send(message.content);
+			if (emojiList.includes(message.content))
+				return message.channel.send(message.content);
 
-		if (
-			message.content.match(
-				new RegExp(`^<@!?${this.client.user.id}>( |)$`),
-			)
-		)
-			return message.reply(
-				`My prefix is: \`${this.client.config.prefix}\``,
-			);
-
-		const args = message.content.trim().split(/ +/g);
-
-		if (!args[0].startsWith(this.client.config.prefix)) {
-			if (args[0].match(regex.timestamp))
-				return this.client.osu.sendTimestamp(message, regex.timestamp);
-
-			if (message.content.match(regex.beatmap))
-				return this.client.osu.getBeatmap(message, args, regex.beatmap);
-
-			if (message.attachments.size > 0) {
-				if (message.attachments.first().name.includes(".osz"))
-					return this.client.osu.getAudioByOszFile(
-						message,
-						message.attachments.first(),
-					);
-			}
+			const [user, guild] = await Promise.all([
+				this.client.db.user.findOne({
+					id: message.author.id,
+				}),
+				this.client.db.guild.findOne({
+					id: message.guild.id,
+				}),
+			]);
 
 			if (
-				message.channel.nsfw &&
-				(message.content.includes("https://nhentai.net/g/") ||
-					args[0].match(/^[0-9]*$/gm))
-			)
-				return this.client.nhentai.printBook(message, args[0]);
+				message.content.match(
+					new RegExp(`^<@!?${this.client.user.id}>( |)$`),
+				)
+			) {
+				if (!user && !guild)
+					return message.channel.send(
+						`My prefix is: \`${this.client.config.prefix}\``,
+					);
 
-			return;
-		}
+				if (user)
+					return message.channel.send(
+						`My prefix is: \`${user.prefix}\``,
+					);
 
-		args[0] = args[0].slice(this.client.config.prefix.length);
+				return message.channel.send(`My prefix: \`${guild.prefix}\``);
+			}
 
-		const msg = args.join(" ").toLowerCase();
+			const args = message.content.trim().split(/ +/g);
 
-		for (const [key, cmd] of this.client.commands) {
-			if (!key.includes(args[0])) continue;
+			if (
+				!args[0].startsWith(
+					(user || guild || this.client.config).prefix,
+				)
+			) {
+				if (args[0].match(regex.timestamp))
+					return this.client.osu.sendTimestamp(
+						message,
+						regex.timestamp,
+					);
 
-			if (this.checkCommand(msg, cmd, args))
-				this.runCommand(cmd, { message, args });
+				if (message.content.match(regex.beatmap))
+					return this.client.osu.getBeatmap(
+						message,
+						args,
+						regex.beatmap,
+					);
+
+				if (message.attachments.size > 0) {
+					if (message.attachments.first().name.includes(".osz"))
+						return this.client.osu.getAudioByOszFile(
+							message,
+							message.attachments.first(),
+						);
+				}
+
+				if (
+					message.channel.nsfw &&
+					(message.content.includes("https://nhentai.net/g/") ||
+						args[0].match(/^[0-9]*$/gm))
+				)
+					return this.client.nhentai.printBook(message, args[0]);
+
+				return;
+			}
+
+			args[0] = args[0].slice(
+				(user || guild || this.client.config).prefix.length,
+			);
+
+			const msg = args.join(" ").toLowerCase();
+
+			for (const [key, cmd] of this.client.commands) {
+				if (!key.includes(args[0])) continue;
+
+				if (this.checkCommand(msg, cmd, args))
+					this.runCommand(cmd, { message, args });
+			}
+		} catch (err) {
+			this.client.console.error(err);
 		}
 	}
 

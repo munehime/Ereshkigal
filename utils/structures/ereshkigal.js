@@ -10,12 +10,14 @@ import Osu from "./osu.js";
 import NHentai from "./nhentai.js";
 
 import config from "../../config.js";
+import db from "../../models/index.js";
 
 export default class Ereshkigal extends Client {
 	constructor(options) {
 		super(options);
 
 		this.config = config;
+		this.db = db;
 
 		this.console = new Console(this);
 		this.utils = new Utils(this);
@@ -33,6 +35,16 @@ export default class Ereshkigal extends Client {
 	}
 
 	async init() {
+		this.db.mongoose
+			.connect(process.env.MONGO_URI, {
+				useNewUrlParser: true,
+				useUnifiedTopology: true,
+			})
+			.then(() => {
+				console.log("Successfully connected to MongoDB.");
+			})
+			.catch((err) => console.error(err));
+
 		const [commands, events, locales] = await Promise.all([
 			this.commands.loadFiles(),
 			this.events.loadFiles(),

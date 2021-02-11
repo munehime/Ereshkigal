@@ -1,8 +1,8 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 mongoose.Promise = global.Promise;
 
-module.exports = db = {
+export default {
 	mongoose,
-	user: require("./schema/users.js"),
-	guild: require("./schema/guilds.js"),
+	user: (await import("./schema/users.js")).default,
+	guild: (await import("./schema/guilds.js")).default,
 };

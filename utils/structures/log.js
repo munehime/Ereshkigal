@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import moment from "moment";
+import { inspect } from "util";
 
 import { Console } from "console";
 
@@ -12,8 +13,11 @@ export default class Log extends Console {
 
 	print(content, type = "log") {
 		type = type.toLowerCase();
+		content = this.parseContent(content);
 		const timestamp = `[${moment().format("YYYY/MM/DD HH:mm:ss")}]:`;
-		super[this.TYPE[type]](chalk[this.COLORS[type]](`${timestamp} ${content}`));
+		super[this.TYPE[type]](
+			chalk[this.COLORS[type]](`${timestamp} ${content}`),
+		);
 	}
 
 	log(...args) {
@@ -34,6 +38,19 @@ export default class Log extends Console {
 
 	ready(...args) {
 		this.print(...args, "ready");
+	}
+
+	parseContent(content) {
+		if (Array.isArray(content))
+			return content.map(this.parseContent).join("\n");
+
+		if (typeof content === "object" && content !== null)
+			return inspect(content, { depth: 0, colors: true });
+
+		if (content && content.constructor === Error)
+			return content.stack || content.message || String(content);
+
+		return String(content);
 	}
 
 	TYPE = {
