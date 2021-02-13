@@ -16,8 +16,7 @@ export default class Uitls {
 
 			const prefix = (user || guild || this.client.config).prefix;
 
-			let found = false;
-			this.client.commands.some((cmd) => {
+			const found = this.client.commands.some((cmd) => {
 				let command = cmd.command;
 				if (!Array.isArray(command)) command = [command];
 				if (command.includes(name.toLowerCase())) {
@@ -68,17 +67,22 @@ export default class Uitls {
 					};
 
 					message.channel.send({ embed: embed });
-					found = true;
 					return true;
 				}
 			});
 
-			if (found) return true;
-			return false;
+			return found;
 		} catch (err) {
 			this.client.console.error(err);
 		}
 	}
+
+	/**
+	 * Get emote by name
+	 * @param {*} emoteName
+	 * @param {*} guild
+	 * @returns emote
+	 */
 
 	getEmote(emoteName, guild) {
 		let emote;

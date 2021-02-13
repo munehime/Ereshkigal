@@ -38,7 +38,7 @@ export default class Osu {
 
 		this.api = instance;
 
-		let access_token = await client_credentials_grant();
+		const access_token = await client_credentials_grant();
 		instance = axios.create({
 			baseURL: "https://osu.ppy.sh/api/v2",
 		});
@@ -64,69 +64,72 @@ export default class Osu {
 		}
 	}
 
-	getAudioByOszFile(message, attachment) {
-		axios
-			.get(attachment.url, { responseType: "stream" })
-			.then(async (response) => {
-				await response.data.pipe(
-					fs
-						.createWriteStream(`temp/downloads/${attachment.name}`)
-						.on("finish", () => {
-							let input = `temp/downloads/${attachment.name}`;
-							let output = `temp/output/${attachment.name.replace(
+	async getAudioByOszFile(message, attachment) {
+		try {
+			const response = await axios.get(attachment.url, {
+				responseType: "stream",
+			});
+
+			response.data.pipe(
+				fs
+					.createWriteStream(`temp/downloads/${attachment.name}`)
+					.on("finish", () => {
+						const input = `temp/downloads/${attachment.name}`,
+							output = `temp/output/${attachment.name.replace(
 								".osz",
 								"",
 							)}`;
 
-							fs.createReadStream(input)
-								.pipe(unzipper.Extract({ path: output }))
-								.on("finish", () => {
-									const mp3File = fs
-										.readdirSync(`${output}`)
-										.filter((f) => f.endsWith(".mp3"))[0];
+						fs.createReadStream(input)
+							.pipe(unzipper.Extract({ path: output }))
+							.on("finish", () => {
+								const mp3File = fs
+									.readdirSync(`${output}`)
+									.filter((f) => f.endsWith(".mp3"))[0];
 
-									const convert = spawn(ffmpeg, [
-										"-i",
-										`${output}/${mp3File}`,
-										"-b:a",
-										"128K",
+								const convert = spawn(ffmpeg, [
+									"-i",
+									`${output}/${mp3File}`,
+									"-b:a",
+									"128K",
+									`${output}/128K_${mp3File}`,
+								]);
+
+								convert.on("close", () => {
+									const buffer = fs.readFileSync(
 										`${output}/128K_${mp3File}`,
-									]);
+									);
 
-									convert.on("close", () => {
-										const buffer = fs.readFileSync(
-											`${output}/128K_${mp3File}`,
-										);
+									const attachment = new MessageAttachment(
+										buffer,
+										"audio.mp3",
+									);
 
-										const attachment = new MessageAttachment(
-											buffer,
-											"audio.mp3",
-										);
-
-										fs.remove(input, (err) => {
-											if (err)
-												return this.client.console.error(
-													err,
-												);
-										});
-										fs.remove(output, (err) => {
-											if (err)
-												return this.client.console.error(
-													err,
-												);
-										});
-
-										message.channel
-											.send(`MP3 Preview:`, attachment)
-											.catch((err) =>
-												this.client.console.error(err),
+									fs.remove(input, (err) => {
+										if (err)
+											return this.client.console.error(
+												err,
 											);
 									});
+									fs.remove(output, (err) => {
+										if (err)
+											return this.client.console.error(
+												err,
+											);
+									});
+
+									message.channel
+										.send(`MP3 Preview:`, attachment)
+										.catch((err) =>
+											this.client.console.error(err),
+										);
 								});
-						}),
-				);
-			})
-			.catch((err) => this.client.console.error(err));
+							});
+					}),
+			);
+		} catch (err) {
+			this.client.console.error(err);
+		}
 	}
 
 	sendTimestamp(message, regex) {
@@ -169,90 +172,82 @@ export default class Osu {
 			let response = await this.api.get("/get_beatmaps", {
 				params: params,
 			});
+			
 			await Object.assign(beatmap, response.data[0]);
 
-			axios
-				.get(`https://osu.gatari.pw/d/${beatmap.beatmapset_id}`, {
+			response = await axios.get(
+				`https://osu.gatari.pw/d/${beatmap.beatmapset_id}`,
+				{
 					responseType: "stream",
-				})
-				.then(async (response) => {
-					await response.data.pipe(
-						fs
-							.createWriteStream(
-								`temp/downloads/${replaceToValidName(
-									beatmap.artist,
-								)}_-_${replaceToValidName(beatmap.title)}.osz`,
+				},
+			);
+
+			await response.data.pipe(
+				fs
+					.createWriteStream(
+						`temp/downloads/${replaceToValidName(
+							beatmap.artist + beatmap.title,
+						)}.osz`,
+					)
+					.on("finish", () => {
+						let input = `temp/downloads/${replaceToValidName(
+							beatmap.artist + beatmap.title,
+						)}.osz`;
+						let output = `temp/output/${replaceToValidName(
+							beatmap.artist + beatmap.title,
+						)}`;
+
+						fs.createReadStream(input)
+							.pipe(
+								unzipper
+									.Extract({ path: output })
+									.on("error", (err) => console.error(err)),
 							)
-							.on("finish", () => {
-								let input = `temp/downloads/${replaceToValidName(
-									beatmap.artist,
-								)}_-_${replaceToValidName(beatmap.title)}.osz`;
-								let output = `temp/output/${replaceToValidName(
-									beatmap.artist,
-								)}_-_${replaceToValidName(beatmap.title)}`;
+							.on("finish", async () => {
+								const mp3File = fs
+									.readdirSync(`${output}`)
+									.filter((f) => f.endsWith(".mp3"))[0];
 
-								fs.createReadStream(input)
-									.pipe(
-										unzipper
-											.Extract({ path: output })
-											.on("error", (err) =>
-												console.error(err),
-											),
-									)
-									.on("finish", async () => {
-										const mp3File = fs
-											.readdirSync(`${output}`)
-											.filter((f) =>
-												f.endsWith(".mp3"),
-											)[0];
+								const convert = spawn(ffmpeg, [
+									"-i",
+									`${output}/${mp3File}`,
+									"-b:a",
+									"128K",
+									`${output}/128K_${mp3File}`,
+								]);
 
-										const convert = spawn(ffmpeg, [
-											"-i",
-											`${output}/${mp3File}`,
-											"-b:a",
-											"128K",
-											`${output}/128K_${mp3File}`,
-										]);
+								convert.on("close", () => {
+									const buffer = fs.readFileSync(
+										`${output}/128K_${mp3File}`,
+									);
 
-										convert.on("close", () => {
-											const buffer = fs.readFileSync(
-												`${output}/128K_${mp3File}`,
+									const attachment = new MessageAttachment(
+										buffer,
+										"audio.mp3",
+									);
+
+									fs.remove(input, (err) => {
+										if (err)
+											return this.client.console.error(
+												err,
 											);
-
-											const attachment = new MessageAttachment(
-												buffer,
-												"audio.mp3",
-											);
-
-											fs.remove(input, (err) => {
-												if (err)
-													return this.client.console.error(
-														err,
-													);
-											});
-											fs.remove(output, (err) => {
-												if (err)
-													return this.client.console.error(
-														err,
-													);
-											});
-
-											message.channel
-												.send(
-													`MP3 Preview:`,
-													attachment,
-												)
-												.catch((err) =>
-													this.client.console.error(
-														err,
-													),
-												);
-										});
 									});
-							}),
-					);
-				})
-				.catch((err) => this.client.console.error(err));
+									fs.remove(output, (err) => {
+										if (err)
+											return this.client.console.error(
+												err,
+											);
+									});
+
+									message.channel
+										.send(`MP3 Preview:`, attachment)
+										.catch((err) =>
+											this.client.console.error(err),
+										);
+								});
+							});
+					}),
+			);
 
 			response = await axios.get(
 				`https://osu.lea.moe/b/${beatmap.beatmap_id}`,
@@ -489,18 +484,19 @@ export default class Osu {
 
 async function client_credentials_grant() {
 	let access_token, expires_in;
-	await axios
-		.post("https://osu.ppy.sh/oauth/token", {
+	try {
+		const response = await axios.post("https://osu.ppy.sh/oauth/token", {
 			client_id: Number(process.env.CLIENT_ID),
 			client_secret: process.env.CLIENT_SECRET,
 			grant_type: "client_credentials",
 			scope: "public",
-		})
-		.then((response) => {
-			access_token = response.data.access_token;
-			expires_in = response.data.expires_in;
-		})
-		.catch((error) => cl.console.error(error));
+		});
+
+		access_token = response.data.access_token;
+		expires_in = response.data.expires_in;
+	} catch (err) {
+		cl.console.error(error);
+	}
 
 	clearTimeout(client_credentials_grant.interval);
 	client_credentials_grant.interval = setTimeout(function () {

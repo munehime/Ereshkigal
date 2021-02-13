@@ -5,6 +5,7 @@ let cl, daysTo, daysFrom;
 
 export default class extends Event {
 	async run() {
+		// Set bot's presence
 		this.client.console.ready("Connected!");
 		this.client.user.setActivity(
 			"Đại học Bách Ngành - Đại học Quốc gia osu!",
@@ -18,17 +19,17 @@ export default class extends Event {
 		);
 		try {
 			const webhooks = await channel.fetchWebhooks();
-			let webhook,
-				exists = false;
 
-			webhooks.some((wh) => {
+			// Get Webhook exists with bot's name
+			let webhook;
+			const exists = webhooks.some((wh) => {
 				if (wh.name === this.client.user.username) {
 					webhook = wh;
-					exists = true;
 					return true;
 				}
 			});
 
+			// If not create one
 			if (!exists)
 				await channel
 					.createWebhook(this.client.user.username, {

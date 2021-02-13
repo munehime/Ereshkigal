@@ -35,25 +35,28 @@ export default class Ereshkigal extends Client {
 	}
 
 	async init() {
-		this.db.mongoose
-			.connect(process.env.MONGO_URI, {
-				useNewUrlParser: true,
-				useUnifiedTopology: true,
-			})
-			.then(() => {
-				console.log("Successfully connected to MongoDB.");
-			})
-			.catch((err) => console.error(err));
+		try {
+			this.db.mongoose
+				.connect(process.env.MONGO_URI, {
+					useNewUrlParser: true,
+					useUnifiedTopology: true,
+				})
+				.then(() => {
+					console.log("Successfully connected to MongoDB.");
+				});
 
-		const [commands, events, locales] = await Promise.all([
-			this.commands.loadFiles(),
-			this.events.loadFiles(),
-			this.locales.loadFiles(),
-		]);
-		this.osu.init();
+			const [commands, events, locales] = await Promise.all([
+				this.commands.loadFiles(),
+				this.events.loadFiles(),
+				this.locales.loadFiles(),
+			]);
+			this.osu.init();
 
-		this.console.log(`Loaded ${commands.length} commands.`);
-		this.console.log(`Loaded ${events.length} events.`);
-		this.console.log(`Loaded ${locales.length} locales.`);
+			this.console.log(`Loaded ${commands.length} commands.`);
+			this.console.log(`Loaded ${events.length} events.`);
+			this.console.log(`Loaded ${locales.length} locales.`);
+		} catch (err) {
+			this.console.error(err);
+		}
 	}
 }

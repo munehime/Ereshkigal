@@ -103,26 +103,24 @@ export default class extends Event {
 			if (message.author.id !== process.env.BOT_OWNER_ID) return false;
 		}
 
-		let cmdMatch = false,
+		let matchCommand = false,
 			isStartsWith = false,
 			commands = command.command;
 
 		if (command.startsWith) isStartsWith = true;
 		if (!Array.isArray(commands)) commands = [commands];
 
-		commands.some((cmd) => {
+		matchCommand = commands.some((cmd) => {
 			if (isStartsWith) {
 				if (msg.startsWith(cmd)) {
-					cmdMatch = true;
 					return true;
 				}
 			} else if (msg.startsWith(cmd + " ") || msg === cmd) {
-				cmdMatch = true;
 				return true;
 			}
 		});
 
-		if (cmdMatch) {
+		if (matchCommand) {
 			if (
 				command.argsRequired !== 0 &&
 				args.length <= command.argsRequired

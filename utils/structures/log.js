@@ -14,6 +14,7 @@ export default class Log extends Console {
 	print(content, type = "log") {
 		type = type.toLowerCase();
 		content = this.parseContent(content);
+		
 		const timestamp = `[${moment().format("YYYY/MM/DD HH:mm:ss")}]:`;
 		super[this.TYPE[type]](
 			chalk[this.COLORS[type]](`${timestamp} ${content}`),
@@ -62,10 +63,10 @@ export default class Log extends Console {
 	};
 
 	COLORS = {
-		log: "whiteBright",
-		debug: "blueBright",
-		error: "redBright",
-		warn: "yellowBright",
-		ready: "greenBright",
+		log: "#FFFFFF",
+		debug: "#0066FF",
+		error: "#E10600",
+		warn: "#ECE81A",
+		ready: "#2FF924",
 	};
 }
