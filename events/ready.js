@@ -62,7 +62,7 @@ export default class extends Event {
 		}
 
 		cl = this.client;
-		await countDownToTime("2021-06-25");
+		await countDownToTime("2021-07-04");
 		await countTimePassed("2020-04-22");
 	}
 }

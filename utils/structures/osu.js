@@ -119,7 +119,7 @@ export default class Osu {
 									});
 
 									message.channel
-										.send(`MP3 Preview:`, attachment)
+										.send(`MP3 File:`, attachment)
 										.catch((err) =>
 											this.client.console.error(err),
 										);
@@ -240,7 +240,7 @@ export default class Osu {
 									});
 
 									message.channel
-										.send(`MP3 Preview:`, attachment)
+										.send(`MP3 File:`, attachment)
 										.catch((err) =>
 											this.client.console.error(err),
 										);
@@ -343,7 +343,7 @@ export default class Osu {
 				embed.description += `**${pp_fc[i].acc}%:** ${pp_fc[
 					i
 				].pp_total.toFixed(2)}pp `;
-				if (i < pp_fc.length - 2) embed.description += "| ";
+				if (i < pp_fc.length - 1) embed.description += "| ";
 			}
 
 			return message.channel.send({ embed: embed });
