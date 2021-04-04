@@ -17,7 +17,7 @@ export default class Log extends Console {
 		
 		const timestamp = `[${moment().format("YYYY/MM/DD HH:mm:ss")}]:`;
 		super[this.TYPE[type]](
-			chalk[this.COLORS[type]](`${timestamp} ${content}`),
+			chalk.hex([this.COLORS[type]])(`${timestamp} ${content}`),
 		);
 	}
 
