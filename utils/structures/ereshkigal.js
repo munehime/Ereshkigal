@@ -1,4 +1,6 @@
+import fs from "fs-extra";
 import { Client } from "discord.js";
+
 
 import CommandStore from "./stores/commandStore.js";
 import EventStore from "./stores/eventStore.js";
@@ -18,6 +20,8 @@ export default class Ereshkigal extends Client {
 
 		this.config = config;
 		this.db = db;
+
+		this.channelsSettings = [];
 
 		this.console = new Console(this);
 		this.utils = new Utils(this);
@@ -44,6 +48,13 @@ export default class Ereshkigal extends Client {
 				.then(() => {
 					console.log("Successfully connected to MongoDB.");
 				});
+				
+			let data = await JSON.parse(
+			fs.readFileSync("database/channels/settings.json", "utf8"),
+			);
+			data.map((prefix) => {
+				this.channelsSettings.push(prefix);
+			});
 
 			const [commands, events, locales] = await Promise.all([
 				this.commands.loadFiles(),

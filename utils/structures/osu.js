@@ -133,12 +133,22 @@ export default class Osu {
 	}
 
 	sendTimestamp(message, regex) {
-		const timestamp = message.content.split(regex);
-		return message.channel.send(
-			`<osu://edit/${timestamp[1]}:${timestamp[2]}:${timestamp[3]}${
-				timestamp[4] ? `-${timestamp[4]}` : ""
-			}>`,
-		);
+		let timestamp,
+			msg = "";
+		while ((timestamp = regex.exec(message)) !== null) {
+			if (timestamp.index === regex.lastIndex) {
+				regex.lastIndex++;
+			}
+
+			const time = `${timestamp[1]}:${timestamp[2]}:${timestamp[3]}${
+				timestamp[4] ? ` - ${timestamp[4]}` : ""
+			}`;
+
+			msg += `**${time}: <osu://edit/${time.replace(/ /gi, "")}>**\n`;
+		}
+
+		if (msg.length === 0) return;
+		return message.channel.send(msg);
 	}
 
 	async getBeatmap(message, args, regex) {

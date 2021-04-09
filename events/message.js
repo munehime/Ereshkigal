@@ -2,7 +2,7 @@ import Event from "../utils/structures/event.js";
 
 const emojiList = ["🍵", "☕", "🥧"];
 const regex = {
-	timestamp: new RegExp(/(\d+):(\d{2}):(\d{3})\s*(\(((\d\,?)+)\))?/i),
+	timestamp: new RegExp(/(\d+):(\d{2}):(\d{3})\s*(\(((\d\,?)+)\))?/gi),
 	beatmap: new RegExp(
 		/(osu|old)\.ppy\.sh\/(s|b|beatmaps|beatmapsets)\/(\d+)(#(osu|taiko|fruits|mania)\/(\d+))?/i,
 	),
@@ -24,6 +24,16 @@ export default class extends Event {
 					id: message.guild.id,
 				}),
 			]);
+			
+			let channelSettings = {
+				auto_info: true,
+			};
+			this.client.channelsSettings.some((channel) => {
+				if (message.channel.id === channel.channel_id) {
+					channelSettings.auto_info = channel.auto_info;
+					return true;
+				}
+			});
 
 			if (
 				message.content.match(
@@ -56,14 +66,15 @@ export default class extends Event {
 						regex.timestamp,
 					);
 
-				if (message.content.match(regex.beatmap))
+				if (message.content.match(regex.beatmap) &&
+					channelSettings.auto_info)
 					return this.client.osu.getBeatmap(
 						message,
 						args,
 						regex.beatmap,
 					);
 
-				if (message.attachments.size > 0) {
+				if (message.attachments.size > 0 && channelSettings.auto_info ) {
 					if (message.attachments.first().name.includes(".osz"))
 						return this.client.osu.getAudioByOszFile(
 							message,
