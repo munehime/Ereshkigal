@@ -46,8 +46,7 @@ export default class Toggle extends Command {
 					},
 				);
 
-				return cb(
-					null,
+				return message.channel.send(
 					`${
 						newSettings.auto_info ? "Turn on" : "Turn off"
 					} auto info in this channel!`,
