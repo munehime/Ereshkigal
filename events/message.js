@@ -24,7 +24,7 @@ export default class extends Event {
 					id: message.guild.id,
 				}),
 			]);
-			
+
 			let channelSettings = {
 				auto_info: true,
 			};
@@ -60,21 +60,23 @@ export default class extends Event {
 					(user || guild || this.client.config).prefix,
 				)
 			) {
-				if (args[0].match(regex.timestamp))
+				if (message.content.match(regex.timestamp))
 					return this.client.osu.sendTimestamp(
 						message,
 						regex.timestamp,
 					);
 
-				if (message.content.match(regex.beatmap) &&
-					channelSettings.auto_info)
+				if (
+					message.content.match(regex.beatmap) &&
+					channelSettings.auto_info
+				)
 					return this.client.osu.getBeatmap(
 						message,
 						args,
 						regex.beatmap,
 					);
 
-				if (message.attachments.size > 0 && channelSettings.auto_info ) {
+				if (message.attachments.size > 0 && channelSettings.auto_info) {
 					if (message.attachments.first().name.includes(".osz"))
 						return this.client.osu.getAudioByOszFile(
 							message,
