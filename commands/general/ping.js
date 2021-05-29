@@ -11,7 +11,7 @@ export default class Ping extends Command {
 
 	async run(obj) {
 		const { message } = obj;
-
+		msg.channel.send('Hello');
 		const msg = await message.channel.send("**Pong!!!**");
 		msg.edit(
 			`**Pong!!!\nCurrent latency is ${
