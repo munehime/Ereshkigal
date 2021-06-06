@@ -25,7 +25,7 @@
 		"zlib-sync": "^0.1.7"
 	},
 	"scripts": {
-		"start": "node index.js"
+		"start": "yarn node index.js"
 	},
 	"author": "Mune",
 	"license": "ISC",
